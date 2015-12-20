@@ -1,0 +1,4 @@
+version=3
+opts=downloadurlmangle=s/^ftp/http/ \
+http://www.videolan.org/developers/libbluray.html \
+ftp://ftp.videolan.org/pub/videolan/libbluray/.*/libbluray-(.*)\.tar\.bz2

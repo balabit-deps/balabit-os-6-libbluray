@@ -1,0 +1,17 @@
+Description: Work around #751532
+ Once #751532 is fixed, this patch should be removed again or adapted
+ accordingly.
+Author: Sebastian Ramacher <sramacher@debian.org>
+Bug-Debian: http://bugs.debian.org/751433
+Last-Update: 2014-06-28
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -215,6 +215,7 @@
+        freebsd*) java_os=freebsd ;;
+        solaris*) java_os=solaris ;;
+        darwin*)  java_os=darwin ;;
++       kfreebsd*) java_os=linux ;;
+        *)        java_os=$host_os ;;
+   esac
+ 

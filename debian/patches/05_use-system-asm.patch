@@ -1,0 +1,37 @@
+Description: Use system asm4 instead of embedded copy
+Author: Sebastian Ramacher <sramacher@debian.org>>
+Last-Update: 2015-11-04
+
+--- a/src/libbluray/bdj/build.xml
++++ b/src/libbluray/bdj/build.xml
+@@ -19,22 +19,23 @@
+ 
+     <target name="compile" depends="init"
+             description="compile the source " >
+-        <javac srcdir="${src_asm}" destdir="${build}" debug="yes"
+-               bootclasspath="${bootclasspath}"
+-               source="1.5" target="1.5">
+-               <compilerarg value="-XDignore.symbol.file"/>
+-               <compilerarg value="-Xlint:-deprecation"/>
+-        </javac>
+         <javac srcdir="${src}${src_awt}" destdir="${build}" debug="yes"
+                bootclasspath="${bootclasspath}"
+                source="1.4" target="1.4">
+                <compilerarg value="-XDignore.symbol.file"/>
+                <compilerarg value="-Xlint:-deprecation"/>
++               <classpath>
++                   <pathelement path="/usr/share/java/asm4.jar" />
++               </classpath>
+         </javac>
+     </target>
+     <target name="dist" depends="compile"
+             description="generate the distribution" >
+-        <jar jarfile="${dist}/libbluray-${version}.jar" basedir="${build}" />
++            <jar jarfile="${dist}/libbluray-${version}.jar" basedir="${build}">
++                <manifest>
++                    <attribute name="Class-Path" value="/usr/share/java/asm4.jar" />
++                </manifest>
++            </jar>
+     </target>
+ 
+     <target name="clean"

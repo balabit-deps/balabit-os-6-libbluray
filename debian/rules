@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+
+confflags = --with-libxml2 --with-freetype \
+	--enable-bdjava --with-bdj-type=j2se \
+	--enable-udf \
+	--disable-silent-rules
+# --enable-bdjava-jar is introduced by 03_split-jar-build-for-arch-all.patch.
+# This enables us to build the JAR file only if the Architecture: all package
+# libbluray-bdj is built.
+confflags_java = --enable-bdjava-jar
+
+# Use default java implementation
+export JDK_HOME=/usr/lib/jvm/default-java
+ifeq (,$(wildcard $(JDK_HOME)))
+    $(info "warning: No suitable jni.h was found. Package will most probably FTBFS!")
+endif
+
+%:
+	dh $@ --parallel --with javahelper,autoreconf
+
+override_dh_auto_configure:
+ifneq (,$(findstring libbluray-bdj,$(shell dh_listpackages)))
+	dh_auto_configure -- $(confflags) $(confflags_java)
+else
+	dh_auto_configure -- $(confflags)
+endif
+
+override_dh_auto_build-indep:
+	make doxygen-doc
+
+override_dh_strip:
+	dh_strip -plibbluray1 --ddeb-migration='libbluray1-dbg (<< 1:0.9.2-2~)'
+	dh_strip --remaining-packages
+
+override_dh_installdocs:
+	dh_installdocs --exclude=jquery.js
+
+override_dh_install:
+	dh_install -X.la --fail-missing
+
+override_dh_clean:
+	dh_clean
+	rm -rf src/libbluray/bdj/build
